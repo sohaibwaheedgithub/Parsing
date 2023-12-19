@@ -20,7 +20,7 @@ ENV PATH="/home/appuser/.local/bin:${PATH}"
 RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && rm get-pip.py
 
 ARG CLONE_REPO=1
-RUN if [ "${CLONE_REPO}" = 1 ]; then git clone https://github.com/sohaibwaheedgithub/CIHP_PGN.git HPP_Repo; fi
+RUN if [ "${CLONE_REPO}" = 1 ]; then git clone https://github.com/sohaibwaheedgithub/Parsing.git HPP_Repo; fi
 
 #RUN git clone https://github.com/sohaibwaheedgithub/CIHP_PGN.git HPP_Repo
 
@@ -31,4 +31,4 @@ RUN pip install -r requirement.txt
 RUN gdown 1BFVXgeln-bek8TCbRjN6utPAgRE0LJZg && mkdir checkpoint \
     && unzip JPPNet-s2.zip -d checkpoint && rm JPPNet-s2.zip
 
-CMD python3 evaluate_parsing_JPPNet-s2.py
+CMD python3 mod_evaluate_parsing_JPPNet-s2-copy.py
