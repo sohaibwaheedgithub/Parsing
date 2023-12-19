@@ -1,0 +1,10 @@
+---
+version: "3.8"
+
+services:
+  densepose: 
+    build: path/to/dockerfile
+  segmentation: 
+    build: path
+  virtual_try_on: 
+    build: path
