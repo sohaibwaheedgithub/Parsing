@@ -26,6 +26,22 @@ PA_OUTPUT_DIR = 'temp_train/image-parse-agnostic-v3.2'
 FM_OUTPUT_DIR = 'temp_train/face-parse'
 
 
+if not os.path.exists(CM_OUTPUT_DIR):
+    os.mkdir(CM_OUTPUT_DIR)
+
+if not os.path.exists(SM_OUTPUT_DIR):
+    os.mkdir(SM_OUTPUT_DIR)
+    
+if not os.path.exists(C_OUTPUT_DIR):
+    os.mkdir(C_OUTPUT_DIR)
+
+if not os.path.exists(PA_OUTPUT_DIR):
+    os.mkdir(PA_OUTPUT_DIR)
+    
+if not os.path.exists(FM_OUTPUT_DIR):
+    os.mkdir(FM_OUTPUT_DIR)
+    
+
 
 
 def main():
