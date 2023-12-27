@@ -29,21 +29,27 @@ PAR_OUTPUT_DIR = 'temp_train/parse_ids'
 
 if not os.path.exists(CM_OUTPUT_DIR):
     os.mkdir(CM_OUTPUT_DIR)
+    os.chmod(CM_OUTPUT_DIR, 0o777)
 
 if not os.path.exists(SM_OUTPUT_DIR):
     os.mkdir(SM_OUTPUT_DIR)
+    os.chmod(SM_OUTPUT_DIR, 0o777)
     
 if not os.path.exists(C_OUTPUT_DIR):
     os.mkdir(C_OUTPUT_DIR)
+    os.chmod(C_OUTPUT_DIR, 0o777)
 
 if not os.path.exists(PA_OUTPUT_DIR):
     os.mkdir(PA_OUTPUT_DIR)
+    os.chmod(PA_OUTPUT_DIR, 0o777)
     
 if not os.path.exists(FM_OUTPUT_DIR):
     os.mkdir(FM_OUTPUT_DIR)
+    os.chmod(FM_OUTPUT_DIR, 0o777)
     
 if not os.path.exists(PAR_OUTPUT_DIR):
     os.mkdir(PAR_OUTPUT_DIR)
+    os.chmod(PAR_OUTPUT_DIR, 0o777)
 
 
 
@@ -257,5 +263,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    while True:
-        pass
