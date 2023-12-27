@@ -24,6 +24,7 @@ SM_OUTPUT_DIR = 'temp_train/image-parse-v3'
 C_OUTPUT_DIR = 'temp_train/cloth'
 PA_OUTPUT_DIR = 'temp_train/image-parse-agnostic-v3.2'
 FM_OUTPUT_DIR = 'temp_train/face-parse'
+PAR_OUTPUT_DIR = 'temp_train/parse_ids'
 
 
 if not os.path.exists(CM_OUTPUT_DIR):
@@ -41,6 +42,8 @@ if not os.path.exists(PA_OUTPUT_DIR):
 if not os.path.exists(FM_OUTPUT_DIR):
     os.mkdir(FM_OUTPUT_DIR)
     
+if not os.path.exists(PAR_OUTPUT_DIR):
+    os.mkdir(PAR_OUTPUT_DIR)
 
 
 
@@ -202,7 +205,7 @@ def main():
             parsing_ = np.where(np.isin(parsing_, list(range(14, 20))), parsing_ - 8, parsing_)
             
             # Saving parsing array file
-            #np.save('{}/{}.npy'.format(PAR_OUTPUT_DIR, img_id), parsing_)
+            np.save('{}/{}.npy'.format(PAR_OUTPUT_DIR, img_id), parsing_)
             
             # Saving cloth-mask
             cm_parsing_ = np.where(parsing_ == 2, parsing_, 0)
@@ -254,3 +257,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+    while True:
+        pass
