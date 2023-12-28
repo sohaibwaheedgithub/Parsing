@@ -14,17 +14,17 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 N_CLASSES = 20
 INPUT_SIZE = (384, 384)
-DATA_DIRECTORY = 'temp_train/image'
+DATA_DIRECTORY = '/home/appuser/HPP_Repo/temp_train/image'
 DATA_LIST_PATH = ''
 NUM_STEPS = len(os.listdir(DATA_DIRECTORY)) # Number of images in the validation set.
-RESTORE_FROM = 'checkpoint/JPPNet-s2'
+RESTORE_FROM = '/home/appuser/HPP_Repo/checkpoint/JPPNet-s2'
 
-CM_OUTPUT_DIR = 'temp_train/cloth-mask'
-SM_OUTPUT_DIR = 'temp_train/image-parse-v3'
-C_OUTPUT_DIR = 'temp_train/cloth'
-PA_OUTPUT_DIR = 'temp_train/image-parse-agnostic-v3.2'
-FM_OUTPUT_DIR = 'temp_train/face-parse'
-PAR_OUTPUT_DIR = 'temp_train/parse_ids'
+CM_OUTPUT_DIR = '/home/appuser/HPP_Repo/temp_train/cloth-mask'
+SM_OUTPUT_DIR = '/home/appuser/HPP_Repo/temp_train/image-parse-v3'
+C_OUTPUT_DIR = '/home/appuser/HPP_Repo/temp_train/cloth'
+PA_OUTPUT_DIR = '/home/appuser/HPP_Repo/temp_train/image-parse-agnostic-v3.2'
+FM_OUTPUT_DIR = '/home/appuser/HPP_Repo/temp_train/face-parse'
+PAR_OUTPUT_DIR = '/home/appuser/HPP_Repo/temp_train/parse_ids'
 
 
 if not os.path.exists(CM_OUTPUT_DIR):

@@ -1,2 +1,2 @@
-import numpy as np
-print(np.logical_or([True, False], [False, False]))
+import matplotlib.pyplot as plt
+plt.imread(r'\\wsl.localhost\docker-desktop-data\data\docker\volumes\vol1\_data\image\a_man1.jpg')
