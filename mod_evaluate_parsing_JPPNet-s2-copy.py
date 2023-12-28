@@ -16,6 +16,7 @@ N_CLASSES = 20
 INPUT_SIZE = (384, 384)
 DATA_DIRECTORY = '/home/appuser/HPP_Repo/temp_train/image'
 DATA_LIST_PATH = ''
+print("Path of current working dir is: ", os.getcwd())
 NUM_STEPS = len(os.listdir(DATA_DIRECTORY)) # Number of images in the validation set.
 RESTORE_FROM = '/home/appuser/HPP_Repo/checkpoint/JPPNet-s2'
 

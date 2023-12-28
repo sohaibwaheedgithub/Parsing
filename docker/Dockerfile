@@ -19,8 +19,8 @@ ENV PATH="/home/appuser/.local/bin:${PATH}"
 
 RUN wget https://bootstrap.pypa.io/get-pip.py && python3 get-pip.py && rm get-pip.py
 
-ARG CLONE_REPO=6
-RUN if [ "${CLONE_REPO}" = "6" ]; then git clone https://github.com/sohaibwaheedgithub/Parsing.git HPP_Repo; fi
+ARG CLONE_REPO=7
+RUN if [ "${CLONE_REPO}" = "7" ]; then git clone https://github.com/sohaibwaheedgithub/Parsing.git HPP_Repo; fi
 
 WORKDIR /home/appuser/HPP_Repo
 
