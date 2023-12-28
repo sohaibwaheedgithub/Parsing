@@ -6,7 +6,7 @@ import os
 import cv2
 from PIL import Image
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 
 # Hide the warning messages about CPU/GPU
@@ -14,15 +14,42 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 N_CLASSES = 20
 INPUT_SIZE = (384, 384)
-DATA_DIRECTORY = '/notebooks/Parent/dataset/train/image'
+DATA_DIRECTORY = 'temp_train/image'
 DATA_LIST_PATH = ''
 NUM_STEPS = len(os.listdir(DATA_DIRECTORY)) # Number of images in the validation set.
-RESTORE_FROM = '/notebooks/Parent/LIP-JPPNet-TensorFlow/checkpoint/JPPNet-s2'
+RESTORE_FROM = 'checkpoint/JPPNet-s2'
 
-CM_OUTPUT_DIR = '/notebooks/Parent/dataset/train/cloth-mask'
-SM_OUTPUT_DIR = '/notebooks/Parent/dataset/train/image-parse-v3'
-C_OUTPUT_DIR = '/notebooks/Parent/dataset/train/cloth'
-PA_OUTPUT_DIR = '/notebooks/Parent/dataset/train/image-parse-agnostic-v3.2'
+CM_OUTPUT_DIR = 'temp_train/cloth-mask'
+SM_OUTPUT_DIR = 'temp_train/image-parse-v3'
+C_OUTPUT_DIR = 'temp_train/cloth'
+PA_OUTPUT_DIR = 'temp_train/image-parse-agnostic-v3.2'
+FM_OUTPUT_DIR = 'temp_train/face-parse'
+PAR_OUTPUT_DIR = 'temp_train/parse_ids'
+
+
+if not os.path.exists(CM_OUTPUT_DIR):
+    os.mkdir(CM_OUTPUT_DIR)
+    os.chmod(CM_OUTPUT_DIR, 0o777)
+
+if not os.path.exists(SM_OUTPUT_DIR):
+    os.mkdir(SM_OUTPUT_DIR)
+    os.chmod(SM_OUTPUT_DIR, 0o777)
+    
+if not os.path.exists(C_OUTPUT_DIR):
+    os.mkdir(C_OUTPUT_DIR)
+    os.chmod(C_OUTPUT_DIR, 0o777)
+
+if not os.path.exists(PA_OUTPUT_DIR):
+    os.mkdir(PA_OUTPUT_DIR)
+    os.chmod(PA_OUTPUT_DIR, 0o777)
+    
+if not os.path.exists(FM_OUTPUT_DIR):
+    os.mkdir(FM_OUTPUT_DIR)
+    os.chmod(FM_OUTPUT_DIR, 0o777)
+    
+if not os.path.exists(PAR_OUTPUT_DIR):
+    os.mkdir(PAR_OUTPUT_DIR)
+    os.chmod(PAR_OUTPUT_DIR, 0o777)
 
 
 
@@ -166,47 +193,35 @@ def main():
             img_split = image_list[step].split('/')
             img_id = img_split[-1][:-4]
             
-            # Merge all upper cloths categories into one class
+
+            # Adding unnecessary classes to background
+            condition = np.isin(parsing_, [0, 1, 2, 4, 11, 13])
+            face_parsing = np.where(condition, 1, 0)
+            parsing_ = np.where(condition, 0, parsing_)
+            
+            # Merging all upper cloths categories into one class
             condition = np.isin(parsing_, [6, 7, 10])
             parsing_ = np.where(condition, 5, parsing_)
-
+            
+            # Offseting class ids to order
+            parsing_ = np.where(parsing_ == 3, parsing_ - 2, parsing_)
+            parsing_ = np.where(parsing_ == 5, parsing_ - 3, parsing_)
+            parsing_ = np.where(np.logical_or(parsing_ == 8, parsing_ == 9), parsing_ - 5, parsing_)
+            parsing_ = np.where(parsing_ == 12, parsing_ - 7, parsing_)
+            parsing_ = np.where(np.isin(parsing_, list(range(14, 20))), parsing_ - 8, parsing_)
             
             # Saving parsing array file
-            #np.save('{}/{}.npy'.format(PAR_OUTPUT_DIR, img_id), parsing_)
+            np.save('{}/{}.npy'.format(PAR_OUTPUT_DIR, img_id), parsing_)
             
             # Saving cloth-mask
-            cm_parsing_ = np.where(parsing_ == 5, parsing_, 0)
+            cm_parsing_ = np.where(parsing_ == 2, parsing_, 0)
             cm_msk = decode_labels(cm_parsing_, num_classes=N_CLASSES, extra_param=True)
             cm_parsing_im = Image.fromarray(cm_msk[0]).convert('L')
             cm_parsing_im.save('{}/{}.jpg'.format(CM_OUTPUT_DIR, img_id))
             
-            # Saving segmentation mask
-            seg_parsing_mask = np.isin(parsing_, [8, 9])
-            seg_parsing = np.where(seg_parsing_mask, parsing_ - 2, parsing_)
-            seg_parsing_mask = np.isin(seg_parsing, list(range(11, 20)))
-            seg_parsing = np.where(seg_parsing_mask, seg_parsing - 3, seg_parsing)
-            seg_mask = Image.fromarray(np.asarray(seg_parsing[0, :, :, 0], dtype=np.uint8))
-            palette = list(np.array(utils.lip_label_colours).reshape(20*3,))
-            seg_mask.putpalette(palette)
-            seg_mask.save('{}/{}.png'.format(SM_OUTPUT_DIR, img_id))
-            
-            
-            # Saving parse-agnostic
-            condition = np.isin(seg_parsing, [5, 11, 12])
-            pa_parsing = np.where(condition, 0, seg_parsing)
-            
-            pa_parsing_mask = np.isin(pa_parsing, list(range(6, 11)))
-            pa_parsing = np.where(pa_parsing_mask, pa_parsing - 1, pa_parsing)
-            pa_parsing_mask = np.isin(pa_parsing, list(range(13, 17)))
-            pa_parsing = np.where(pa_parsing_mask, pa_parsing - 3, pa_parsing)
-            
-            pa_seg_mask = Image.fromarray(np.asarray(pa_parsing[0, :, :, 0], dtype=np.uint8))
-            pa_seg_mask.putpalette(palette)
-            pa_seg_mask.save('{}/{}.png'.format(PA_OUTPUT_DIR, img_id))
-            
             
             # Saving cloths
-            up_cloths_mask = np.where(parsing_ == 5, True, False)
+            up_cloths_mask = np.where(parsing_ == 2, True, False)
             up_cloths_mask_bd = np.broadcast_to(up_cloths_mask, shape=list(up_cloths_mask.shape[:-1]) + [3])
             up_cloths_mask_bd = np.squeeze(up_cloths_mask_bd, axis=0)
             ori_img = np.array(Image.open(image_list[step]))
@@ -214,6 +229,30 @@ def main():
             ori_img = np.where(up_cloths_mask_bd, ori_img, b_img)
             ori_img = Image.fromarray(ori_img)
             ori_img.save('{}/{}.jpg'.format(C_OUTPUT_DIR, img_id))
+            
+            
+            # Saving segmentation mask
+            seg_mask = Image.fromarray(np.asarray(parsing_[0, :, :, 0], dtype=np.uint8))
+            palette = list(np.array(utils.lip_label_colours).reshape(len(utils.lip_label_colours)*3,))
+            seg_mask.putpalette(palette)
+            seg_mask.save('{}/{}.png'.format(SM_OUTPUT_DIR, img_id))
+            
+            
+            # Saving parse-agnostic
+            condition = np.isin(parsing_, [2, 6, 7])
+            parsing_ = np.where(condition, 0, parsing_)
+            parsing_ = np.where(np.isin(parsing_, [3, 4, 5]), parsing_ - 1, parsing_)
+            parsing_ = np.where(np.isin(parsing_, list(range(8, 12))), parsing_ - 3, parsing_)
+            pa_seg_mask = Image.fromarray(np.asarray(parsing_[0, :, :, 0], dtype=np.uint8))
+            pa_seg_mask.putpalette(palette)
+            pa_seg_mask.save('{}/{}.png'.format(PA_OUTPUT_DIR, img_id))
+            
+            
+            # Saving face segmentation mask
+            face_mask = Image.fromarray(np.asarray(face_parsing[0, :, :, 0], dtype=np.uint8))
+            face_palette = [0, 0, 0, 255, 255, 255]
+            face_mask.putpalette(face_palette)
+            face_mask.save('{}/{}.png'.format(FM_OUTPUT_DIR, img_id))
             
         except Exception as err:
             print(err)
