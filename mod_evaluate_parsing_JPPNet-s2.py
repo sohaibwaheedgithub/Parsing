@@ -267,7 +267,12 @@ def main():
                 face_mask.putpalette(face_palette)
                 face_mask.save('{}/{}.png'.format(FM_OUTPUT_DIR, img_id))
                 
-                os.remove(os.path.join(DATA_DIRECTORY, not_empty[0]))
+                '''while True:
+                    empty = os.listdir(DATA_DIRECTORY)
+                    if empty:
+                        break'''
+                os.remove(image_list[step])
+                    
         
         
                 

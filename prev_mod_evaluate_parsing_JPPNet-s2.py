@@ -17,6 +17,8 @@ INPUT_SIZE = (384, 384)
 DATA_DIRECTORY = 'temp_train/image'
 DATA_LIST_PATH = ''
 NUM_STEPS = len(os.listdir(DATA_DIRECTORY)) # Number of images in the validation set.
+
+
 RESTORE_FROM = 'checkpoint/JPPNet-s2'
 
 CM_OUTPUT_DIR = 'temp_train/cloth-mask'
@@ -185,6 +187,7 @@ def main():
 
     # Iterate over training steps.
     for step in range(NUM_STEPS):
+        print(image_list)
         try:
             parsing_ = sess.run(pred_all)
             if step % 1 == 0:
