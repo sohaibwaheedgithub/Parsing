@@ -187,7 +187,6 @@ def main():
 
     # Iterate over training steps.
     for step in range(NUM_STEPS):
-        print(image_list)
         try:
             parsing_ = sess.run(pred_all)
             if step % 1 == 0:
